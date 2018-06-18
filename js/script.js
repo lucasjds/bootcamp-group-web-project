@@ -38,6 +38,7 @@ class Pokemon{
   	return this._stats;
   }
   
+
   toString(){
 		return this._name + "! A pokemon of " + this._types.map(a => a.getName()) + " type!";
   }
@@ -122,6 +123,7 @@ const search = (event) => {
     }).then(data => {
     	console.log(data);
       const types = createArrayType(data.types);
+     
       const stats = new Stats(data.stats[0].base_stat,
       												data.stats[1].base_stat,
                               data.stats[2].base_stat,
@@ -131,7 +133,7 @@ const search = (event) => {
    
       const pokemon = new Pokemon(
       										"#" + data.id,
-      										data.name, 
+      										data.name.toUpperCase(), 
                           data.sprites.front_default ,
                           types,
                           data.height,
@@ -152,6 +154,7 @@ function createArrayType(data){
   });
   return types;
 }
-
-document.getElementById("pokeform").addEventListener('submit', search);
+window.onload=function(){
+	document.getElementById("pokeform").addEventListener('submit', search);
+};
   
