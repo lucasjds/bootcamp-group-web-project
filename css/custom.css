@@ -61,6 +61,10 @@ section article:nth-child(6){
 }
 #pokeimage{
   float:left;
+  border: 1px none;
+  border-radius: 5px;
+  background-color:#e8ecdb;
+  margin-right:4px;
 }
 
 
@@ -68,14 +72,13 @@ section article:nth-child(6){
   width:auto !important; 
   background-color:#e1bc9a !important;
   text-align:left; 
-  float: right;
+  width:190px !important; 
 }
 
 .body_information{
-  width:70px !important; 
+  width:190px !important; 
   background-color:#abc5de !important;
   text-align:left;
-  float: right;
 }
 
 .header{
