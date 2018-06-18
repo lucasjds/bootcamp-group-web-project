@@ -67,9 +67,21 @@ section article:nth-child(6){
   text-align:left; 
 }
 
+.body_information{
+  width:70px !important; 
+  background-color:#abc5de !important;
+  text-align:left;
+}
+
 .header{
   width: auto !important;
   padding: 5px !important;
+}
+
+.height, .weight{
+  text-align: right !important;
+  width:auto !important;
+  float: right !important;
 }
 
 

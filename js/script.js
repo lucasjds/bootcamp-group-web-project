@@ -1,11 +1,17 @@
 
 class Pokemon{
-  constructor(name,image,types,height, stats){
+  constructor(id,name,image,types,height, weight, stats){
+  	this._id = id;
     this._name = name;
     this._image = image;
     this._types = types;
     this._height = height;
+    this._weight = weight;
     this._stats = stats;
+  }
+  
+  getId(){
+  	return this._id;
   }
   
  	getName(){
@@ -22,6 +28,10 @@ class Pokemon{
   
   getHeight(){
   	return this._height;
+  }
+  
+  getWeight(){
+  	return this._weight;
   }
   
   getStats(){
@@ -85,10 +95,12 @@ class Stats{
 
 //const $pokemons = $("#pokemons");
 const addPokemon = (pokemon) => {
+	document.getElementById("idpokemon").innerHTML = pokemon.getId();
   document.getElementById("pokename").innerHTML = pokemon.getName();
   document.getElementById("pokeimage").src = pokemon.getImage();
   document.getElementById("type").innerHTML = pokemon.getTypes().map(a => a.getName());
   document.getElementById("height").innerHTML = pokemon.getHeight();
+  document.getElementById("weight").innerHTML = pokemon.getWeight();
   document.getElementById("hp").innerHTML = pokemon.getStats().getHP();
   document.getElementById("attack").innerHTML = pokemon.getStats().getAttack();
   document.getElementById("defense").innerHTML = pokemon.getStats().getDefense();
@@ -96,7 +108,7 @@ const addPokemon = (pokemon) => {
   document.getElementById("spdefense").innerHTML = pokemon.getStats().getSpecialDefense();
   document.getElementById("speed").innerHTML = pokemon.getStats().getSpeed();
   
-  responsiveVoice.speak(pokemon.toString());
+  //responsiveVoice.speak(pokemon.toString());
 };
 
 const search = (event) => {
@@ -118,10 +130,12 @@ const search = (event) => {
                               data.stats[5].base_stat);
    
       const pokemon = new Pokemon(
+      										"#" + data.id,
       										data.name, 
                           data.sprites.front_default ,
                           types,
                           data.height,
+                          data.weight,
                           stats);
    	
       addPokemon(pokemon);
@@ -138,8 +152,6 @@ function createArrayType(data){
   });
   return types;
 }
-window.onload=function(){
-	document.getElementById("pokeform").addEventListener('submit', search);
-};
 
+document.getElementById("pokeform").addEventListener('submit', search);
   
