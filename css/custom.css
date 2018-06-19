@@ -112,3 +112,17 @@ section article:nth-child(6){
   display: block;
 }
 
+label{
+  border: 1px solid;
+  border-bottom: 0px none;
+  border-top-left-radius:8px;
+  border-top-right-radius:8px;
+  background-color:#3f51b5;
+  color:white;
+  padding:4px;
+  cursor:pointer;
+}
+
+.tab1{
+  margin-left:22px;
+}
