@@ -93,3 +93,22 @@ section article:nth-child(6){
 }
 
 
+
+#content1,#content2,#content3 ,#content4 {
+  display: none;
+  
+  border-top: 1px solid #ddd;
+}
+
+#tab1,#tab2,#tab3,#tab4 {
+  display: none;
+ 
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4 {
+  display: block;
+}
+
