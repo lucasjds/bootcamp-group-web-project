@@ -8,6 +8,10 @@ class Pokemon{
     this._height = height;
     this._weight = weight;
     this._stats = stats;
+<<<<<<< HEAD
+=======
+    this._moves = [];
+>>>>>>> master
   }
   
   getId(){
@@ -38,6 +42,13 @@ class Pokemon{
   	return this._stats;
   }
   
+<<<<<<< HEAD
+=======
+  getMoves(){
+  	return this._moves;
+  }
+  
+>>>>>>> master
 
   toString(){
 		return this._name + "! A pokemon of " + this._types.map(a => a.getName()) + " type!";
@@ -67,6 +78,19 @@ class Stats{
     this._defense = defense;
     this._attack = attack;
     this._hp = hp;
+<<<<<<< HEAD
+=======
+    this._accuracy = 0;
+    this._evasion = 0;
+  }
+  
+  getEvasion(){
+  	return this._evasion;
+  }
+  
+  getAccuracy(){
+  	return this._accuracy;
+>>>>>>> master
   }
   
   getSpeed(){
@@ -94,6 +118,20 @@ class Stats{
   }
 }
 
+<<<<<<< HEAD
+=======
+class Move{
+	constructor(name){
+  	this._name = name;
+  }
+  
+  getName(name){
+  	return this._name;
+  }
+
+}
+
+>>>>>>> master
 //const $pokemons = $("#pokemons");
 const addPokemon = (pokemon) => {
 	document.getElementById("idpokemon").innerHTML = pokemon.getId();
@@ -112,7 +150,11 @@ const addPokemon = (pokemon) => {
   //responsiveVoice.speak(pokemon.toString());
 };
 
+<<<<<<< HEAD
 const search = (event) => {
+=======
+const searchPokemon = (event) => {
+>>>>>>> master
 		event.preventDefault();
     var param = document.getElementById("pokenumber").value;
     var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
@@ -121,7 +163,11 @@ const search = (event) => {
       url: pokeURL,
       dataType:'json',
     }).then(data => {
+<<<<<<< HEAD
     	console.log(data);
+=======
+    	//console.log(data);
+>>>>>>> master
       const types = createArrayType(data.types);
      
       const stats = new Stats(data.stats[0].base_stat,
@@ -130,7 +176,11 @@ const search = (event) => {
                               data.stats[3].base_stat,
                               data.stats[4].base_stat,
                               data.stats[5].base_stat);
+<<<<<<< HEAD
    
+=======
+   		searchMove(data.moves[0].move.url);
+>>>>>>> master
       const pokemon = new Pokemon(
       										"#" + data.id,
       										data.name.toUpperCase(), 
@@ -144,6 +194,21 @@ const search = (event) => {
     }).catch( e  => console.log(e));
 }
 
+<<<<<<< HEAD
+=======
+const searchMove = (url) => {
+		
+    $.ajax({
+      url: url,
+      dataType:'json',
+    }).then(data => {
+    	console.log(data);
+		const move = new Move(data.name);
+      
+    }).catch( e  => console.log(e));
+}
+
+>>>>>>> master
 function createArrayType(data){
 	var types = [];
   var type = new Type();
@@ -155,6 +220,11 @@ function createArrayType(data){
   return types;
 }
 window.onload=function(){
+<<<<<<< HEAD
 	document.getElementById("pokeform").addEventListener('submit', search);
 };
   
+=======
+	document.getElementById("pokeform").addEventListener('submit', searchPokemon);
+};
+>>>>>>> master
