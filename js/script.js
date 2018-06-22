@@ -3,11 +3,11 @@ class Pokemon {
         this._id = id;
         this._name = name;
         this._image = image;
-        this._types = types;
+        this._types = types; //array type class
         this._height = height;
         this._weight = weight;
-        this._stats = stats;
-        this._moves = moves;
+        this._stats = stats; //stats class
+        this._moves = moves; //array move class
     }
 
     getId() {
@@ -123,7 +123,7 @@ class Move {
         this._pp = pp;
         this._priority = priority;
         this._power = power;
-        this._statChanges = statChanges; //type is Stats
+        this._statChanges = statChanges; // array Stats Class
     }
 
     getName() {
@@ -175,13 +175,9 @@ const searchPokemon = (event) => {
     var param = document.getElementById("pokenumber").value;
     var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
 	
+	if(JSON.parse(localStorage.getItem("Pokemon"))._id == param)
+		return retriveCache(JSON.parse(localStorage.getItem("Pokemon")));
 	
-	//var test = JSON.parse(localStorage.getItem("Pokemon"));
-	//alert( test._id);
-	
-	//if(localStorage.getItem("Pokemon").getId() == param){
-	//	return addPokemon(localStorage.getItem("Pokemon"));
-	//}
 		
     $.ajax({
         url: pokeURL,
@@ -191,14 +187,14 @@ const searchPokemon = (event) => {
         const types = createArrayType(data.types);
 		
         const stats = new Stats(data.stats[0].base_stat,
-            data.stats[1].base_stat,
-            data.stats[2].base_stat,
-            data.stats[3].base_stat,
-            data.stats[4].base_stat,
-            data.stats[5].base_stat, 0, 0);
+								data.stats[1].base_stat,
+								data.stats[2].base_stat,
+								data.stats[3].base_stat,
+								data.stats[4].base_stat,
+								data.stats[5].base_stat, 0, 0);
 			
         var moves= [];
-		var move = "";
+		var move = null;
         for (var i = 0; i < 4; i++) {
 			move = searchMove(data.moves[Math.floor(0 + Math.random() * data.moves.length)].move.url);
             moves.push( move );
@@ -216,8 +212,6 @@ const searchPokemon = (event) => {
         addPokemon(pokemon);
 		localStorage.setItem("Pokemon", JSON.stringify(pokemon));
     }).catch(e => console.log(e));
-
-
 }
 
 const searchMove = (url) => {
@@ -235,18 +229,51 @@ const searchMove = (url) => {
 				data.priority,
 				data.power,
 				stat_changes);
-			console.log(move.getName());
+			console.log(move.getStatChanges());
 		},
     }).catch(e => console.log(e));
 
 	return move;
 }
 
+function retriveCache(data){
+	const types = createArrayType(data._types);
+		
+	const stats = new Stats(data._speed,
+							data._specialDefense,
+							data._specialAttack,
+							data._defense,
+							data._attack,
+							data._hp, 0, 0);
+		
+	var moves= [];
+	var move = null;
+	for (var i = 0; i < data._moves.length; i++) {
+		move = new Move(data._moves[i]._name,
+						data._moves[i]._accuracy,
+						data._moves[i]._pp,
+						data._moves[i]._priority,
+						data._moves[i]._power);
+		moves.push( move );
+	}
+	const pokemon = new Pokemon(
+		data._id,
+		data._name.toUpperCase(),
+		data._image,
+		types,
+		data._height,
+		data._weight,
+		stats,
+		moves);
+
+	addPokemon(pokemon);
+}
+
 function createArrayType(data) {
     var types = [];
     var type = new Type();
     data.forEach(function(element) {
-        type.setName(element.type.name);
+        type.setName( ((typeof element.type) == 'undefined') ? element._name : element.type.name);
         types.push(type);
         type = new Type();
     });
@@ -263,6 +290,7 @@ function createStatChanges(data) {
             stats.setAccuracy(data[i].change)
         }
     }
+	return stats;
 }
 
 window.onload = function() {
