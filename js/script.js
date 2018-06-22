@@ -174,25 +174,35 @@ const searchPokemon = (event) => {
     event.preventDefault();
     var param = document.getElementById("pokenumber").value;
     var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
-
+	
+	
+	//var test = JSON.parse(localStorage.getItem("Pokemon"));
+	//alert( test._id);
+	
+	//if(localStorage.getItem("Pokemon").getId() == param){
+	//	return addPokemon(localStorage.getItem("Pokemon"));
+	//}
+		
     $.ajax({
         url: pokeURL,
         dataType: 'json',
         cache: true,
     }).then(data => {
         const types = createArrayType(data.types);
-
+		
         const stats = new Stats(data.stats[0].base_stat,
             data.stats[1].base_stat,
             data.stats[2].base_stat,
             data.stats[3].base_stat,
             data.stats[4].base_stat,
             data.stats[5].base_stat, 0, 0);
-        //var moves= [];
+			
+        var moves= [];
+		var move = "";
         for (var i = 0; i < 4; i++) {
-            searchMove(data.moves[Math.floor(0 + Math.random() * data.moves.length)].move.url);
+			move = searchMove(data.moves[Math.floor(0 + Math.random() * data.moves.length)].move.url);
+            moves.push( move );
         }
-
         const pokemon = new Pokemon(
             data.id,
             data.name.toUpperCase(),
@@ -201,32 +211,35 @@ const searchPokemon = (event) => {
             data.height,
             data.weight,
             stats,
-            0);
+            moves);
 
         addPokemon(pokemon);
+		localStorage.setItem("Pokemon", JSON.stringify(pokemon));
     }).catch(e => console.log(e));
 
 
 }
 
 const searchMove = (url) => {
-
-    $.ajax({
+	var move = null;
+	$.ajax({
         url: url,
         dataType: 'json',
-    }).then(data => {
-        //name,accuracy,pp,priority,power,statChanges
-        var stat_changes = createStatChanges(data.stat_changes);
-        let move = new Move(data.name,
-            data.accuracy,
-            data.pp,
-            data.priority,
-            data.power,
-            stat_changes);
-        console.log(move.getName());
-
+		async: false,
+		success: function (data) {
+			//name,accuracy,pp,priority,power,statChanges
+			var stat_changes = createStatChanges(data.stat_changes);
+			move = new Move(data.name,
+				data.accuracy,
+				data.pp,
+				data.priority,
+				data.power,
+				stat_changes);
+			console.log(move.getName());
+		},
     }).catch(e => console.log(e));
 
+	return move;
 }
 
 function createArrayType(data) {
@@ -241,7 +254,7 @@ function createArrayType(data) {
 }
 
 function createStatChanges(data) {
-    let stats = new Stats(0, 0, 0, 0, 0, 0, 0, 0);
+    var stats = new Stats(0, 0, 0, 0, 0, 0, 0, 0);
     for (var i = 0; i < data.length; i++) {
         if (data[i].stat.name == "evasion") {
             stats.setEvasion(data[i].change);
@@ -251,6 +264,7 @@ function createStatChanges(data) {
         }
     }
 }
+
 window.onload = function() {
 	document.getElementById("pokeform").addEventListener('submit', searchPokemon);
 }
