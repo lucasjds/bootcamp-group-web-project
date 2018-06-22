@@ -5,60 +5,102 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ProDigi - Project List</title>
-
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Pokedex</title>
 
     <!-- Custom -->
     <link href="css/custom.css" rel="stylesheet">
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+    <script src='js/script.js'></script>
 </head>
-<body>
-    <header>
-        <div class="navbar navbar-dark bg-dark">
-            <div class="container d-flex justify-content-between">
-                <a href="index.html" class="navbar-brand">ProDigi</a>
-            </div>
-        </div>
-    </header>
-    <main role="main">
-        <section class="jumbotron text-center">
-            <div class="container">
-                <h1 class="jumbotron-heading">Projects List</h1>
-                <br />
-                <div class="area">
-                    <p>
-                        <a href="credits.html" class="btn btn-primary">Main Project</a>
-                    </p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Project 01</a>
-                    </p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Project 02</a>
-                    </p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Project 03</a>
-                    </p>
-                </div>
-            </div>
-        </section>
-    </main>
-    <footer class="text-muted">
-        <div class="container">
-            <p class="float-right">
-                <a href="#">Back to top</a>
-            </p>
-            <p>ProDigi Example Projects</p>
-        </div>
-    </footer>
 
-    <!-- Core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+<body>
+    <form id=pokeform>
+		<input id=pokenumber placeholder="Number of the pokemon" />
+		<button type=submit>Go!</button>
+	</form>
+	<br>
+	<input id="tab1" type="radio" name="tabs" checked>
+
+	<input id="tab2" type="radio" name="tabs">
+
+	<input id="tab3" type="radio" name="tabs">
+
+	<section id="content1" class="all">
+		<section class="header">
+			<img id="pokeimage" />
+
+			<article class="basic_information">
+				<strong id="idpokemon">#</strong> <span id=pokename></span>
+				<br>
+				<span id=type></span>
+			</article>
+			<article class="body_information">
+				<strong>HT</strong>
+				<div class="height" id="height"></div>
+				<br>
+				<strong>WT</strong>
+				<div class="weight" id="weight"></div>
+			</article>
+
+		</section>
+
+		<section>
+			<fieldset>
+				<legend>
+					Stats
+				</legend>
+
+				<section>
+					<article>
+						HP
+						<br><span id="hp"></span>
+					</article>
+					<article>
+						Atk:
+						<br><span id="attack"></span>
+					</article>
+					<article>
+						Def:
+						<br><span id="defense"></span>
+					</article>
+					<article>
+						Speed:
+						<br><span id="speed"></span>
+					</article>
+					<article>
+						Sp.Atk:
+						<br><span id="spattack"></span>
+					</article>
+					<article>
+						Sp.Def:
+						<br><span id="spdefense"></span>
+					</article>
+
+				</section>
+
+			</fieldset>
+		</section>
+		<br>
+	</section>
+
+	<section id="content2">
+		teste2
+	</section>
+
+	<section id="content3">
+		test3
+	</section>
+
+	<section>
+		<label class="tab1" for="tab1">Main</label>
+
+		<label for="tab2">Moves</label>
+
+		<label for="tab3">Details</label>
+	</section>
+
 
 </body>
 
