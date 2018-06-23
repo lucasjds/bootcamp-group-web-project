@@ -59,12 +59,17 @@ section article:nth-child(5){
 section article:nth-child(6){
   background-color:#FA92B2;
 }
-#pokeimage{
+#pokeimage, #pokeimage2{
   float:left;
   border: 1px none;
   border-radius: 5px;
   background-color:#e8ecdb;
   margin-right:4px;
+}
+
+#pokemon1, #pokemon2{
+	width:auto;
+	float:left;
 }
 
 
@@ -94,13 +99,13 @@ section article:nth-child(6){
 
 
 
-#content1,#content2,#content3 ,#content4 {
+#content1,#content2,#content3 ,#content4,#content5,#content6 {
   display: none;
   
   border-top: 1px solid #ddd;
 }
 
-#tab1,#tab2,#tab3,#tab4 {
+#tab1,#tab2,#tab3,#tab4,#tab5,#tab6 {
   display: none;
  
 }
@@ -108,7 +113,9 @@ section article:nth-child(6){
 #tab1:checked ~ #content1,
 #tab2:checked ~ #content2,
 #tab3:checked ~ #content3,
-#tab4:checked ~ #content4 {
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 {
   display: block;
 }
 
@@ -123,6 +130,6 @@ label{
   cursor:pointer;
 }
 
-.tab1{
+.tab1,.tab4{
   margin-left:22px;
 }

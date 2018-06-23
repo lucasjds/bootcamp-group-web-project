@@ -158,31 +158,30 @@ class Move {
 }
 
 //const $pokemons = $("#pokemons");
-const addPokemon = (pokemon) => {
-    document.getElementById("idpokemon").innerHTML = "#" + pokemon.getId();
-    document.getElementById("pokename").innerHTML = pokemon.getName();
-    document.getElementById("pokeimage").src = pokemon.getImage();
-    document.getElementById("type").innerHTML = pokemon.getTypes().map(a => a.getName());
-    document.getElementById("height").innerHTML = pokemon.getHeight();
-    document.getElementById("weight").innerHTML = pokemon.getWeight();
-    document.getElementById("hp").innerHTML = pokemon.getStats().getHP();
-    document.getElementById("attack").innerHTML = pokemon.getStats().getAttack();
-    document.getElementById("defense").innerHTML = pokemon.getStats().getDefense();
-    document.getElementById("spattack").innerHTML = pokemon.getStats().getSpecialAttack();
-    document.getElementById("spdefense").innerHTML = pokemon.getStats().getSpecialDefense();
-    document.getElementById("speed").innerHTML = pokemon.getStats().getSpeed();
+const addPokemon = (pokemon,player) => {
+    document.getElementById("idpokemon" + player).innerHTML = "#" + pokemon.getId();
+    document.getElementById("pokename" + player).innerHTML = pokemon.getName();
+    document.getElementById("pokeimage" + player).src = pokemon.getImage();
+    document.getElementById("type" + player).innerHTML = pokemon.getTypes().map(a => a.getName());
+    document.getElementById("height" + player).innerHTML = pokemon.getHeight();
+    document.getElementById("weight" + player).innerHTML = pokemon.getWeight();
+    document.getElementById("hp" + player).innerHTML = pokemon.getStats().getHP();
+    document.getElementById("attack" + player).innerHTML = pokemon.getStats().getAttack();
+    document.getElementById("defense" + player).innerHTML = pokemon.getStats().getDefense();
+    document.getElementById("spattack" + player).innerHTML = pokemon.getStats().getSpecialAttack();
+    document.getElementById("spdefense" + player).innerHTML = pokemon.getStats().getSpecialDefense();
+    document.getElementById("speed" + player).innerHTML = pokemon.getStats().getSpeed();
 
     //responsiveVoice.speak(pokemon.toString());
 };
 
-const searchPokemon = (event) => {
-    event.preventDefault();
-    var param = document.getElementById("pokenumber").value;
-    var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
+const searchPokemon = (player) => {
 	
-	if(localStorage.getItem("Pokemon") != null && JSON.parse(localStorage.getItem("Pokemon"))._id == param)
-		return retriveCache(JSON.parse(localStorage.getItem("Pokemon")));
+    var param = document.getElementById("pokenumber" + player).value;
+	if(localStorage.getItem("Pokemon" + player) != null && JSON.parse(localStorage.getItem("Pokemon" + player))._id == param)
+		return retriveCache(JSON.parse(localStorage.getItem("Pokemon" +player)),  player);
 	
+	var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
     $.ajax({
         url: pokeURL,
         dataType: 'json',
@@ -192,13 +191,18 @@ const searchPokemon = (event) => {
 		const stats = createStats(data.stats);
         var moves= [];
 		var move = null;
-        for (var i = 0; i < 4; i++) {
+		var i = 0;
+        while(i != 4) {
 			move = searchMove(data.moves[Math.floor(0 + Math.random() * data.moves.length)].move.url);
-            moves.push( move );
+			if(move != null){
+				moves.push( move );
+				i++;
+			}
+				
         }
 		const pokemon = createPokemon(data, types, stats,moves); 
-        addPokemon(pokemon);
-		localStorage.setItem("Pokemon", JSON.stringify(pokemon));
+        addPokemon(pokemon,player);
+		localStorage.setItem("Pokemon" + player, JSON.stringify(pokemon));
     }).catch(e => console.log(e));
 }
 
@@ -211,15 +215,16 @@ const searchMove = (url) => {
 		success: function (data) {
 			//name,accuracy,pp,priority,power,statChanges
 			var stat_changes = createStatChanges(data.stat_changes);
-			move = createMove(data, stat_changes);
-			console.log(move.getStatChanges());
+			if(data.meta.category.name == "damage" || data.meta.category.name == "net-good-stats")
+				move = createMove(data, stat_changes);
+			//console.log(move.getStatChanges());
 		},
     }).catch(e => console.log(e));
 
 	return move;
 }
 
-function retriveCache(data){
+function retriveCache(data, player){
 	const types = createArrayType(data._types);
 	const stats = createStats(data._stats);
 	var moves= [];
@@ -230,7 +235,7 @@ function retriveCache(data){
 		moves.push( move );
 	}
 	const pokemon = createPokemon(data, types, stats,moves); 
-	addPokemon(pokemon);
+	addPokemon(pokemon, player);
 }
 
 function createArrayType(data) {
@@ -293,5 +298,12 @@ function createMove(data, stat_changes){
 }
 
 window.onload = function() {
-	document.getElementById("pokeform").addEventListener('submit', searchPokemon);
+	document.getElementById("pokeform").addEventListener('submit', function(event){
+															event.preventDefault();
+															searchPokemon("");
+														});
+	document.getElementById("pokeform2").addEventListener('submit', function(event){
+															event.preventDefault();
+															searchPokemon("2");
+														});
 }
