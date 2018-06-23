@@ -187,6 +187,8 @@ class Battle{
 	
 }
 
+const CriticalHitEnum = {0:'4.167', 1:'12.5', 2:'50', 3:'100' , 4:'100'};
+
 //const $pokemons = $("#pokemons");
 const addPokemon = (pokemon,player) => {
     document.getElementById("idpokemon" + player).innerHTML = "#" + pokemon.getId();
@@ -392,8 +394,14 @@ const startBattle = (battle) => {
 	console.log("resultAccuracyMove1 " + resultAccuracyMove1);
 	console.log("resultAccuracyMove2 " + resultAccuracyMove2);
 	
-	//calculating damage 
+	//calculating critical hit
+	var criticalMove1 =  Math.floor(0 + Math.random() * 101) <= CriticalHitEnum[movePlayer1.getCriticalHit()] ? true : false;
+	var criticalMove2 = Math.floor(0 + Math.random() * 101) <= CriticalHitEnum[movePlayer2.getCriticalHit()] ? true : false;
+	console.log("criticalMove1 " + criticalMove1);
+	console.log("criticalMove2 " + criticalMove2);
 	
+	//var random = Math.floor(85 + Math.random() * 16);
+	//var modifier = 
 
 }
 
