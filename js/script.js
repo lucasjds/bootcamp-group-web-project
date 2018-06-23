@@ -185,12 +185,13 @@ const searchPokemon = (event) => {
     }).then(data => {
         const types = createArrayType(data.types);
 		
-        const stats = new Stats(data.stats[0].base_stat,
+        /*const stats = new Stats(data.stats[0].base_stat,
 								data.stats[1].base_stat,
 								data.stats[2].base_stat,
 								data.stats[3].base_stat,
 								data.stats[4].base_stat,
-								data.stats[5].base_stat, 0, 0);
+								data.stats[5].base_stat, 0, 0);*/
+		const stats = createStats(data.stats);
 			
         var moves= [];
 		var move = null;
@@ -198,15 +199,7 @@ const searchPokemon = (event) => {
 			move = searchMove(data.moves[Math.floor(0 + Math.random() * data.moves.length)].move.url);
             moves.push( move );
         }
-        const pokemon = new Pokemon(
-            data.id,
-            data.name.toUpperCase(),
-            data.sprites.front_default,
-            types,
-            data.height,
-            data.weight,
-            stats,
-            moves);
+		const pokemon = createPokemon(data, types, stats,moves); 
 
         addPokemon(pokemon);
 		localStorage.setItem("Pokemon", JSON.stringify(pokemon));
@@ -239,16 +232,10 @@ function retriveCache(data){
 	var move = null;
 	for (var i = 0; i < data._moves.length; i++) {
 		var stat_changes = createStats(data._moves[i]._statChanges);
-		move = new Move(data._moves[i]._name,
-						data._moves[i]._accuracy,
-						data._moves[i]._pp,
-						data._moves[i]._priority,
-						data._moves[i]._power,
-						stat_changes);
+		move = createMove(data._moves[i], stat_changes);
 		moves.push( move );
 	}
 	const pokemon = createPokemon(data, types, stats,moves); 
-
 	addPokemon(pokemon);
 }
 
@@ -277,36 +264,36 @@ function createStatChanges(data) {
 }
 
 function createStats(data){
-	const stats = new Stats(data._speed,
-							data._specialDefense,
-							data._specialAttack,
-							data._defense,
-							data._attack,
-							data._hp,
+	const stats = new Stats(data._speed != null ? data._speed : data[0].base_stat,
+							data._specialDefense != null ? data._specialDefense: data[1].base_stat ,
+							data._specialAttack != null ? data._specialAttack : data[2].base_stat,
+							data._defense != null ? data._defense : data[3].base_stat,
+							data._attack != null ? data._attack : data[4].base_stat,
+							data._hp != null ? data._hp : data[5].base_stat,
 							data._accuracy != null ? data._accuracy : 0,
 							data._evasion != null ? data._evasion : 0);
 	return stats;
 }
 
 function createPokemon(data, types, stats,moves){
-	const pokemon = new Pokemon(data._id,
-								data._name.toUpperCase(),
-								data._image,
+	const pokemon = new Pokemon(data._id  != null ? data._id : data.id,
+								data._name != null ? data._name.toUpperCase() : data.name.toUpperCase(),
+								data._image != null ? data._image : data.sprites.front_default,
 								types,
-								data._height,
-								data._weight,
+								data._height != null ? data._height : data.height,
+								data._weight != null ? data._weight : data.weight,
 								stats,
 								moves);
 	return pokemon;
 }
 
 function createMove(data, stat_changes){
-	const move = new Move(data.name,
-				data.accuracy,
-				data.pp,
-				data.priority,
-				data.power,
-				stat_changes);
+	const move = new Move(data._name != null ? data._name : data.name,
+						data._accuracy != null ? data._accuracy : data.accuracy,
+						data._pp != null ? data._pp : data.pp,
+						data._priority != null ? data._priority : data.priority,
+						data._power != null ? data._power : data.power,
+						stat_changes);
 	return move;
 }
 
