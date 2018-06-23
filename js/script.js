@@ -238,11 +238,13 @@ function retriveCache(data){
 	var moves= [];
 	var move = null;
 	for (var i = 0; i < data._moves.length; i++) {
+		var stat_changes = createStats(data._moves[i]._statChanges);
 		move = new Move(data._moves[i]._name,
 						data._moves[i]._accuracy,
 						data._moves[i]._pp,
 						data._moves[i]._priority,
-						data._moves[i]._power);
+						data._moves[i]._power,
+						stat_changes);
 		moves.push( move );
 	}
 	const pokemon = createPokemon(data, types, stats,moves); 
@@ -280,7 +282,9 @@ function createStats(data){
 							data._specialAttack,
 							data._defense,
 							data._attack,
-							data._hp, 0, 0);
+							data._hp,
+							data._accuracy != null ? data._accuracy : 0,
+							data._evasion != null ? data._evasion : 0);
 	return stats;
 }
 
