@@ -175,10 +175,9 @@ const searchPokemon = (event) => {
     var param = document.getElementById("pokenumber").value;
     var pokeURL = "https://pokeapi.co/api/v2/pokemon/" + param;
 	
-	if(JSON.parse(localStorage.getItem("Pokemon"))._id == param)
+	if(localStorage.getItem("Pokemon") != null && JSON.parse(localStorage.getItem("Pokemon"))._id == param)
 		return retriveCache(JSON.parse(localStorage.getItem("Pokemon")));
 	
-		
     $.ajax({
         url: pokeURL,
         dataType: 'json',
@@ -223,12 +222,7 @@ const searchMove = (url) => {
 		success: function (data) {
 			//name,accuracy,pp,priority,power,statChanges
 			var stat_changes = createStatChanges(data.stat_changes);
-			move = new Move(data.name,
-				data.accuracy,
-				data.pp,
-				data.priority,
-				data.power,
-				stat_changes);
+			move = createMove(data, stat_changes);
 			console.log(move.getStatChanges());
 		},
     }).catch(e => console.log(e));
@@ -239,12 +233,7 @@ const searchMove = (url) => {
 function retriveCache(data){
 	const types = createArrayType(data._types);
 		
-	const stats = new Stats(data._speed,
-							data._specialDefense,
-							data._specialAttack,
-							data._defense,
-							data._attack,
-							data._hp, 0, 0);
+	const stats = createStats(data._stats);
 		
 	var moves= [];
 	var move = null;
@@ -256,15 +245,7 @@ function retriveCache(data){
 						data._moves[i]._power);
 		moves.push( move );
 	}
-	const pokemon = new Pokemon(
-		data._id,
-		data._name.toUpperCase(),
-		data._image,
-		types,
-		data._height,
-		data._weight,
-		stats,
-		moves);
+	const pokemon = createPokemon(data, types, stats,moves); 
 
 	addPokemon(pokemon);
 }
@@ -291,6 +272,38 @@ function createStatChanges(data) {
         }
     }
 	return stats;
+}
+
+function createStats(data){
+	const stats = new Stats(data._speed,
+							data._specialDefense,
+							data._specialAttack,
+							data._defense,
+							data._attack,
+							data._hp, 0, 0);
+	return stats;
+}
+
+function createPokemon(data, types, stats,moves){
+	const pokemon = new Pokemon(data._id,
+								data._name.toUpperCase(),
+								data._image,
+								types,
+								data._height,
+								data._weight,
+								stats,
+								moves);
+	return pokemon;
+}
+
+function createMove(data, stat_changes){
+	const move = new Move(data.name,
+				data.accuracy,
+				data.pp,
+				data.priority,
+				data.power,
+				stat_changes);
+	return move;
 }
 
 window.onload = function() {
