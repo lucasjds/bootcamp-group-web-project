@@ -117,13 +117,14 @@ class Stats {
 }
 
 class Move {
-    constructor(name, accuracy, pp, priority, power, statChanges) {
+    constructor(name, accuracy, pp, priority, power, criticalHit, statChanges) {
         this._name = name;
         this._accuracy = accuracy;
         this._pp = pp;
         this._priority = priority;
         this._power = power;
         this._statChanges = statChanges; // array Stats Class
+		this._criticalHit = criticalHit;
     }
 
     getName() {
@@ -145,6 +146,10 @@ class Move {
     getPower() {
         return this._power;
     }
+	
+	getCriticalHit(){
+		return this._criticalHit;
+	}
 
     getStatChanges() {
         return this._statChanges;
@@ -184,15 +189,7 @@ const searchPokemon = (event) => {
         cache: true,
     }).then(data => {
         const types = createArrayType(data.types);
-		
-        /*const stats = new Stats(data.stats[0].base_stat,
-								data.stats[1].base_stat,
-								data.stats[2].base_stat,
-								data.stats[3].base_stat,
-								data.stats[4].base_stat,
-								data.stats[5].base_stat, 0, 0);*/
 		const stats = createStats(data.stats);
-			
         var moves= [];
 		var move = null;
         for (var i = 0; i < 4; i++) {
@@ -200,7 +197,6 @@ const searchPokemon = (event) => {
             moves.push( move );
         }
 		const pokemon = createPokemon(data, types, stats,moves); 
-
         addPokemon(pokemon);
 		localStorage.setItem("Pokemon", JSON.stringify(pokemon));
     }).catch(e => console.log(e));
@@ -225,9 +221,7 @@ const searchMove = (url) => {
 
 function retriveCache(data){
 	const types = createArrayType(data._types);
-		
 	const stats = createStats(data._stats);
-		
 	var moves= [];
 	var move = null;
 	for (var i = 0; i < data._moves.length; i++) {
@@ -293,6 +287,7 @@ function createMove(data, stat_changes){
 						data._pp != null ? data._pp : data.pp,
 						data._priority != null ? data._priority : data.priority,
 						data._power != null ? data._power : data.power,
+						data._criticalHit != null ? data._criticalHit : data.meta.crit_rate,
 						stat_changes);
 	return move;
 }
