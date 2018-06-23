@@ -117,7 +117,8 @@ class Stats {
 }
 
 class Move {
-    constructor(name, accuracy, pp, priority, power, criticalHit, statChanges) {
+    constructor(id, name, accuracy, pp, priority, power, criticalHit, statChanges , category) {
+		this._id = id;
         this._name = name;
         this._accuracy = accuracy;
         this._pp = pp;
@@ -125,7 +126,12 @@ class Move {
         this._power = power;
         this._statChanges = statChanges; // array Stats Class
 		this._criticalHit = criticalHit;
+		this._category = category;
     }
+	
+	getId(){
+		return this._id;
+	}
 
     getName() {
         return this._name;
@@ -154,7 +160,31 @@ class Move {
     getStatChanges() {
         return this._statChanges;
     }
+	
+	getCategory(){
+		return this._category;
+	}
+	
+	setPP(pp){
+		this._pp = pp;
+	}
 
+}
+
+class Battle{
+	constructor(){
+		this._pokemons = [];
+	}
+	
+	setPokemon(pokemon, player){
+		this._pokemons[player] = pokemon;
+	}
+	
+	getPokemons(){
+		return this._pokemons;
+	}
+	
+	
 }
 
 //const $pokemons = $("#pokemons");
@@ -198,10 +228,10 @@ const searchPokemon = (player) => {
 				moves.push( move );
 				i++;
 			}
-				
         }
 		const pokemon = createPokemon(data, types, stats,moves); 
-        addPokemon(pokemon,player);
+        addPokemonToBattle(pokemon,player);
+		addPokemon(pokemon,player);
 		localStorage.setItem("Pokemon" + player, JSON.stringify(pokemon));
     }).catch(e => console.log(e));
 }
@@ -235,7 +265,8 @@ function retriveCache(data, player){
 		moves.push( move );
 	}
 	const pokemon = createPokemon(data, types, stats,moves); 
-	addPokemon(pokemon, player);
+	addPokemonToBattle(pokemon, player);
+	addPokemon(pokemon,player);
 }
 
 function createArrayType(data) {
@@ -287,17 +318,90 @@ function createPokemon(data, types, stats,moves){
 }
 
 function createMove(data, stat_changes){
-	const move = new Move(data._name != null ? data._name : data.name,
+	const move = new Move(data._id != null ? data._id : data.id,
+						data._name != null ? data._name : data.name,
 						data._accuracy != null ? data._accuracy : data.accuracy,
 						data._pp != null ? data._pp : data.pp,
 						data._priority != null ? data._priority : data.priority,
 						data._power != null ? data._power : data.power,
 						data._criticalHit != null ? data._criticalHit : data.meta.crit_rate,
-						stat_changes);
+						stat_changes,
+						data._category != null ? data._category : data.meta.category.name);
 	return move;
 }
 
+function addPokemonToBattle(pokemon,player){
+	if (player.length == 0){
+		battle.setPokemon(pokemon,0);
+	}else{
+		battle.setPokemon(pokemon,1);
+	}
+	console.log(battle);
+}
+
+const startBattle = (battle) => {
+	if (battle.getPokemons().length < 2)
+		return alert("Choose 2 pokemons to start a battle");
+	
+	//type pokemon class 
+	var firstPlayer = battle.getPokemons()[0];
+	var secondPlayer = battle.getPokemons()[1];
+	
+	//controlling variables
+	var positionMove1 = Math.floor(0 + Math.random() * 4);
+	var positionMove2 = Math.floor(0 + Math.random() * 4);
+	console.log(positionMove1);
+	console.log(positionMove2);
+	var playerTurn = 0;
+	//getting moves
+	var movePlayer1 = firstPlayer.getMoves()[positionMove1];
+	var movePlayer2 = secondPlayer.getMoves()[positionMove2];
+	
+	//decreasing pp
+	battle.getPokemons()[0].getMoves()[positionMove1].setPP(movePlayer1.getPP()-1);
+	battle.getPokemons()[1].getMoves()[positionMove2].setPP(movePlayer2.getPP()-1);
+	console.log(battle);
+	
+	//defining who starts first
+	if(movePlayer1.getPriority() == movePlayer2.getPriority() && firstPlayer.getStats().getSpeed() > secondPlayer.getStats().getSpeed()){
+		playerTurn = 0;
+	}else if(movePlayer1.getPriority() == movePlayer2.getPriority() && firstPlayer.getStats().getSpeed() < secondPlayer.getStats().getSpeed()){
+		playerTurn = 1;
+	}else if(movePlayer1.getPriority() > movePlayer2.getPriority()){
+		playerTurn = 0;
+	}else if(movePlayer1.getPriority() < movePlayer2.getPriority()){
+		playerTurn = 1;
+	}else{
+		playerTurn = Math.floor(0 + Math.random() * 2);
+	}
+	console.log( playerTurn);
+	
+	//calculating accuracy - formula total = accuracy * ( accuracy_stat - ( evasion_stat))
+	var adjusted_stages = firstPlayer.getStats().getAccuracy() - ( secondPlayer.getStats().getEvasion());
+	adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
+	accuracyMove1 = movePlayer1.getAccuracy() * (  adjusted_stages  );
+	
+	adjusted_stages = secondPlayer.getStats().getAccuracy() - ( firstPlayer.getStats().getEvasion());
+	adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
+	accuracyMove2 = movePlayer2.getAccuracy() * (  adjusted_stages  );
+	console.log("accuracyMove1 " + accuracyMove1);
+	console.log("accuracyMove2 " + accuracyMove2);
+	
+	var resultAccuracyMove1 = Math.floor(0 + Math.random() * 101) <= accuracyMove1 ? true : false;
+	var resultAccuracyMove2 = Math.floor(0 + Math.random() * 101) <= accuracyMove2 ? true : false;
+	console.log("resultAccuracyMove1 " + resultAccuracyMove1);
+	console.log("resultAccuracyMove2 " + resultAccuracyMove2);
+	
+	//calculating damage 
+	
+
+}
+
+var battle = new Battle();
+
 window.onload = function() {
+	
+	
 	document.getElementById("pokeform").addEventListener('submit', function(event){
 															event.preventDefault();
 															searchPokemon("");
@@ -305,5 +409,10 @@ window.onload = function() {
 	document.getElementById("pokeform2").addEventListener('submit', function(event){
 															event.preventDefault();
 															searchPokemon("2");
+														});
+														
+	document.getElementById("startbattle").addEventListener('click', function(event){
+															event.preventDefault();
+															startBattle(battle);
 														});
 }
