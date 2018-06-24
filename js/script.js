@@ -198,7 +198,6 @@ const addPokemon = (pokemon,player) => {
     document.getElementById("idpokemon" + player).innerHTML = "#" + pokemon.getId();
     document.getElementById("pokename" + player).innerHTML = pokemon.getName();
     document.getElementById("pokeimage" + player).src = pokemon.getImage();
-	document.getElementById("pokeimagebattle" + player).src = pokemon.getImage();
     document.getElementById("type" + player).innerHTML = pokemon.getTypes().map(a => a.getName());
     document.getElementById("height" + player).innerHTML = pokemon.getHeight();
     document.getElementById("weight" + player).innerHTML = pokemon.getWeight();
@@ -208,6 +207,12 @@ const addPokemon = (pokemon,player) => {
     document.getElementById("spattack" + player).innerHTML = pokemon.getStats().getSpecialAttack();
     document.getElementById("spdefense" + player).innerHTML = pokemon.getStats().getSpecialDefense();
     document.getElementById("speed" + player).innerHTML = pokemon.getStats().getSpeed();
+	
+	//battle
+	document.getElementById("pokeimagebattle" + player).src = pokemon.getImage();
+	document.getElementById("playernamebattle" + player).innerHTML = pokemon.getName();
+	document.getElementById("playerhpbattle" + player).innerHTML = pokemon.getStats().getHP() 
+	document.getElementById("playerhporiginal" + player).innerHTML = pokemon.getStats().getHP();
 
     //responsiveVoice.speak(pokemon.toString());
 };

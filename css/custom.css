@@ -139,7 +139,82 @@ label{
     padding: 25px;
 	background-image: url(../img/battle.png);
     background-repeat: no-repeat;
-	background-size: 60%;
+	background-size: 57%;
 	width:834px;
 	height:469px;
 }
+
+#pokeimagebattle{
+	position: relative;
+    left: 26%;
+	width:96px;
+	height:96px;
+	margin-top:-10%;
+}
+
+#pokeimagebattle2{
+	position: relative;
+	left:65%;
+    width:96px;
+	height:96px;
+	margin-top:-2%;
+}
+
+#informationboard{
+	position:relative;
+	top:-33%;
+	left:0%;
+	border: 7px double black;
+	background-color:#f6fceb;
+	width:auto;
+	height:54%;
+	z-index:999;
+	font-weight:600;
+	border-radius:8px;
+}
+
+#player2score{
+	position:relative;
+	left:1.8%;
+	top:0%;
+	border: 5px double black;
+	border-top-right-radius:12px;
+	border-bottom-left-radius:12px;
+	background-color:#f6fceb;
+	width:43% !important;
+	height:40%;
+	font-weight:600;
+}
+
+
+#player1score{
+	position:relative;
+	left:54%;
+	top:-35%;
+	border: 5px double black;
+	border-top-right-radius:12px;
+	border-bottom-left-radius:12px;
+	background-color:#f6fceb;
+	width:43% !important;
+	height:40%;
+	font-weight:600;
+	
+}
+
+#pokemoninformation2{
+	width:53%;
+	height:33%;
+
+}	
+#pokemoninformation1{
+	width:53%;
+	height:33%;
+}
+
+#playernamebattle, #playernamebattle2,#playerhpbattle,#playerhpbattle2{
+	position:relative;
+	left:2%;
+	top:4%;
+	padding:2px;
+}
+
