@@ -198,6 +198,7 @@ const addPokemon = (pokemon,player) => {
     document.getElementById("idpokemon" + player).innerHTML = "#" + pokemon.getId();
     document.getElementById("pokename" + player).innerHTML = pokemon.getName();
     document.getElementById("pokeimage" + player).src = pokemon.getImage();
+	document.getElementById("pokeimagebattle" + player).src = pokemon.getImage();
     document.getElementById("type" + player).innerHTML = pokemon.getTypes().map(a => a.getName());
     document.getElementById("height" + player).innerHTML = pokemon.getHeight();
     document.getElementById("weight" + player).innerHTML = pokemon.getWeight();

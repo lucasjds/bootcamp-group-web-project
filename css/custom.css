@@ -133,3 +133,13 @@ label{
 .tab1,.tab4{
   margin-left:22px;
 }
+
+#battle{
+	border: 2px solid black;
+    padding: 25px;
+	background-image: url(../img/battle.png);
+    background-repeat: no-repeat;
+	background-size: 60%;
+	width:834px;
+	height:469px;
+}
