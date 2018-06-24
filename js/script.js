@@ -351,10 +351,10 @@ function addPokemonToBattle(pokemon,player){
 	console.log(battle);
 }
 
-const startBattle = (battle) => {
+const startBattle = async (battle) => {
 	if (battle.getPokemons().length < 2)
 		return alert("Choose 2 pokemons to start a battle");
-	
+	play();
 	//type pokemon class 
 	var player = [];
 	player[0] = battle.getPokemons()[0];
@@ -401,7 +401,9 @@ const startBattle = (battle) => {
 				playerNext = 1;
 			}
 			
-			alert(player[playerTurn].getName() + "'s turn");
+			//alert(player[playerTurn].getName() + "'s turn");
+			document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + "'s turn";
+			await sleep(2000);
 			
 			//decreasing pp
 			player[playerTurn].getMoves()[positionMove[playerTurn]].setPP(movePlayer[playerTurn].getPP()-1);
@@ -419,7 +421,9 @@ const startBattle = (battle) => {
 			
 			//validation ACCURACY
 			if(resultAccuracyMove){
-				alert(player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
+				//alert(player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
+				document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName();
+				await sleep(2000);
 				if (movePlayer[playerTurn].getCategory() == "damage"){
 					//calculating critical hit
 					var criticalHit = CriticalHitEnum[movePlayer[playerTurn].getCriticalHit()];
@@ -436,12 +440,21 @@ const startBattle = (battle) => {
 						damageAttack = (( ( ((2/5) + 2) * movePlayer[playerTurn].getPower() * ( player[playerTurn].getStats().getAttack()/player[playerNext].getStats().getDefense() ))/50) + 2 ) * modifierAttack;
 						damageAttack = Math.round(damageAttack * 100) / 100; //decimal point
 					}
-					alert("the damage was " + damageAttack );
+					//alert("the damage was " + damageAttack );
+					document.getElementById("informationboard").innerHTML = "the damage was " + damageAttack;
+					await sleep(2000);
 					
 					//apply damage
 					var currentHP = player[playerNext].getStats().getHP();
-					player[playerNext].getStats().setHP( currentHP - damageAttack);
-					alert(player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP() );
+					var newHP = (Math.round((currentHP - damageAttack) * 100) / 100);
+					player[playerNext].getStats().setHP( (newHP < 0) ? 0 : newHP );
+					
+					//alert(player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP() );
+					document.getElementById("informationboard").innerHTML = player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP();
+					playerNext == 0 ? document.getElementById("playerhpbattle").innerHTML = player[playerNext].getStats().getHP() : 
+									  document.getElementById("playerhpbattle2").innerHTML = player[playerNext].getStats().getHP();
+					await sleep(2000);
+					
 				}
 				if(movePlayer[playerTurn].getCategory() == "net-good-stats"){
 					var accuracy = movePlayer[playerTurn].getStatChanges().getAccuracy();
@@ -453,10 +466,17 @@ const startBattle = (battle) => {
 					player[userAppliedAccuracy].getStats().setAccuracy( currentAccuracy + accuracy);
 					player[userAppliedEvasion].getStats().setEvasion( currentEvasion + evasion);
 					
-					if(accuracy<0 || evasion<0)
-						alert("accuracy/evasion was decreased "  );
+					if(accuracy<0)
+						document.getElementById("informationboard").innerHTML = "accuracy was decreased " ;
 					else
-						alert("accuracy/evasion was increased "  );
+						document.getElementById("informationboard").innerHTML = "accuracy was increased " ;
+					
+					if(evasion<0)
+						document.getElementById("informationboard").innerHTML = "evasion was decreased " ;
+					else
+						document.getElementById("informationboard").innerHTML = "evasion was increased " ;
+					
+					await sleep(2000);
 				}
 				//check whether or not the target is dead
 				if( player[playerNext].getStats().getHP() <= 0)
@@ -466,13 +486,32 @@ const startBattle = (battle) => {
 				playerTurn = playerNext;
 				playerNext = aux;
 			}else{
-				alert(player[playerTurn].getName() + "' missed");
+				//alert(player[playerTurn].getName() + "' missed");
+				document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + " missed";
+				await sleep(2000);
 			}
 		}
 	}
-	alert(player[0].getName() + " "  + player[0].getStats().getHP());
-	
-	alert(player[1].getName() + " "  + player[1].getStats().getHP());
+	var winner =player[1].getStats().getHP();
+	if (  player[0].getStats().getHP() > 0 )
+		winner = player[0].getName();
+	document.getElementById("informationboard").innerHTML = winner + " WINS!!";
+	await sleep(5000);
+	stop();
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function play(){
+   var audio = document.getElementById("audio");
+   audio.play();
+}
+
+function stop(){
+   var audio = document.getElementById("audio");
+   audio.pause();
 }
 
 var battle = new Battle();
