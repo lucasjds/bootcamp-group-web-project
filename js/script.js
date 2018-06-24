@@ -114,6 +114,10 @@ class Stats {
     setAccuracy(accuracy) {
         this._accuracy = accuracy;
     }
+	
+	setHP(hp) {
+        this._hp = hp;
+    }
 }
 
 class Move {
@@ -346,63 +350,123 @@ const startBattle = (battle) => {
 		return alert("Choose 2 pokemons to start a battle");
 	
 	//type pokemon class 
-	var firstPlayer = battle.getPokemons()[0];
-	var secondPlayer = battle.getPokemons()[1];
-	
-	//controlling variables
-	var positionMove1 = Math.floor(0 + Math.random() * 4);
-	var positionMove2 = Math.floor(0 + Math.random() * 4);
-	console.log(positionMove1);
-	console.log(positionMove2);
+	var player = [];
+	player[0] = battle.getPokemons()[0];
+	player[1] = battle.getPokemons()[1];
 	var playerTurn = 0;
-	//getting moves
-	var movePlayer1 = firstPlayer.getMoves()[positionMove1];
-	var movePlayer2 = secondPlayer.getMoves()[positionMove2];
-	
-	//decreasing pp
-	battle.getPokemons()[0].getMoves()[positionMove1].setPP(movePlayer1.getPP()-1);
-	battle.getPokemons()[1].getMoves()[positionMove2].setPP(movePlayer2.getPP()-1);
-	console.log(battle);
-	
-	//defining who starts first
-	if(movePlayer1.getPriority() == movePlayer2.getPriority() && firstPlayer.getStats().getSpeed() > secondPlayer.getStats().getSpeed()){
-		playerTurn = 0;
-	}else if(movePlayer1.getPriority() == movePlayer2.getPriority() && firstPlayer.getStats().getSpeed() < secondPlayer.getStats().getSpeed()){
-		playerTurn = 1;
-	}else if(movePlayer1.getPriority() > movePlayer2.getPriority()){
-		playerTurn = 0;
-	}else if(movePlayer1.getPriority() < movePlayer2.getPriority()){
-		playerTurn = 1;
-	}else{
-		playerTurn = Math.floor(0 + Math.random() * 2);
+	var playerNext = 1;
+	while(player[0].getStats().getHP() > 0 && player[1].getStats().getHP() > 0 ){
+		//controlling variables
+		var positionMove = [];
+		var movePlayer = [];
+		var chosen = false;
+		while(!chosen){
+			positionMove[0] = Math.floor(0 + Math.random() * 4);
+			if(player[0].getMoves()[positionMove[0]].getPP() > 0){
+				movePlayer[0] = player[0].getMoves()[positionMove[0]];
+				chosen = true;
+			}
+		}
+		chosen = false;
+		while(!chosen){
+			positionMove[1] = Math.floor(0 + Math.random() * 4);
+			if(player[1].getMoves()[positionMove[1]].getPP() > 0){
+				movePlayer[1] = player[1].getMoves()[positionMove[1]];
+				chosen = true;
+			}
+		}
+		for(var i = 0 ; i < 2; i++){
+			
+			//defining who starts first
+			if(i == 0 && movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() > player[1].getStats().getSpeed()){
+				playerTurn = 0;
+				playerNext = 1;
+			}else if(i == 0 && movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() < player[1].getStats().getSpeed()){
+				playerTurn = 1;
+				playerNext = 0;
+			}else if(i == 0 && movePlayer[0].getPriority() > movePlayer[1].getPriority()){
+				playerTurn = 0;
+				playerNext = 1;
+			}else if(i == 0 && movePlayer[0].getPriority() < movePlayer[1].getPriority()){
+				playerTurn = 1;
+				playerNext = 0;
+			}else if(i == 0 ){
+				playerTurn = 0;
+				playerNext = 1;
+			}
+			
+			alert(player[playerTurn].getName() + "'s turn");
+			
+			//decreasing pp
+			player[playerTurn].getMoves()[positionMove[playerTurn]].setPP(movePlayer[playerTurn].getPP()-1);
+			
+			//calculating accuracy - formula total = accuracy * ( accuracy_stat - ( evasion_stat))
+			var resultAccuracyMove = true;
+			if( movePlayer[playerTurn].getAccuracy() != undefined){
+				var adjusted_stages = player[playerTurn].getStats().getAccuracy() - ( player[playerNext].getStats().getEvasion());
+				adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
+				var accuracyMove = movePlayer[playerTurn].getAccuracy() * (  adjusted_stages  );
+				resultAccuracyMove = Math.floor(0 + Math.random() * 101) <= accuracyMove ? true : false;
+				console.log("resultAccuracyMove1 " + resultAccuracyMove);
+			}
+			
+			
+			//validation ACCURACY
+			if(resultAccuracyMove){
+				alert(player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
+				if (movePlayer[playerTurn].getCategory() == "damage"){
+					//calculating critical hit
+					var criticalHit = CriticalHitEnum[movePlayer[playerTurn].getCriticalHit()];
+					var criticalMove =  Math.floor(0 + Math.random() * 101) <= criticalHit ? 1.5 : 1;
+					console.log("criticalMove " + criticalMove);
+					
+					//calculating modifier
+					var modifierAttack = criticalMove * ( Math.floor(85 + Math.random() * 16)/100);
+					console.log("modifierAttack1 " + modifierAttack);
+					
+					//calculating damage
+					var damageAttack = 0;
+					if(movePlayer[playerTurn].getPower() != undefined){
+						damageAttack = (( ( ((2/5) + 2) * movePlayer[playerTurn].getPower() * ( player[playerTurn].getStats().getAttack()/player[playerNext].getStats().getDefense() ))/50) + 2 ) * modifierAttack;
+						damageAttack = Math.round(damageAttack * 100) / 100; //decimal point
+					}
+					alert("the damage was " + damageAttack );
+					
+					//apply damage
+					var currentHP = player[playerNext].getStats().getHP();
+					player[playerNext].getStats().setHP( currentHP - damageAttack);
+					alert(player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP() );
+				}
+				if(movePlayer[playerTurn].getCategory() == "net-good-stats"){
+					var accuracy = movePlayer[playerTurn].getStatChanges().getAccuracy();
+					var evasion = movePlayer[playerTurn].getStatChanges().getEvasion();
+					var currentAccuracy = player[playerNext].getStats().getAccuracy();
+					var currentEvasion =  player[playerNext].getStats().getEvasion();
+					var userAppliedAccuracy = accuracy > 0 ? playerTurn : playerNext; 
+					var userAppliedEvasion = evasion > 0 ? playerTurn : playerNext; 
+					player[userAppliedAccuracy].getStats().setAccuracy( currentAccuracy + accuracy);
+					player[userAppliedEvasion].getStats().setEvasion( currentEvasion + evasion);
+					
+					if(accuracy<0 || evasion<0)
+						alert("accuracy/evasion was decreased "  );
+					else
+						alert("accuracy/evasion was increased "  );
+				}
+				//check whether or not the target is dead
+				if( player[playerNext].getStats().getHP() <= 0)
+					i = 2;
+				
+				var aux = playerTurn;
+				playerTurn = playerNext;
+				playerNext = aux;
+			}else{
+				alert(player[playerTurn].getName() + "' missed");
+			}
+		}
 	}
-	console.log( playerTurn);
+	alert(player[0].getName() + " "  + player[0].getStats().getHP());
 	
-	//calculating accuracy - formula total = accuracy * ( accuracy_stat - ( evasion_stat))
-	var adjusted_stages = firstPlayer.getStats().getAccuracy() - ( secondPlayer.getStats().getEvasion());
-	adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
-	accuracyMove1 = movePlayer1.getAccuracy() * (  adjusted_stages  );
-	
-	adjusted_stages = secondPlayer.getStats().getAccuracy() - ( firstPlayer.getStats().getEvasion());
-	adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
-	accuracyMove2 = movePlayer2.getAccuracy() * (  adjusted_stages  );
-	console.log("accuracyMove1 " + accuracyMove1);
-	console.log("accuracyMove2 " + accuracyMove2);
-	
-	var resultAccuracyMove1 = Math.floor(0 + Math.random() * 101) <= accuracyMove1 ? true : false;
-	var resultAccuracyMove2 = Math.floor(0 + Math.random() * 101) <= accuracyMove2 ? true : false;
-	console.log("resultAccuracyMove1 " + resultAccuracyMove1);
-	console.log("resultAccuracyMove2 " + resultAccuracyMove2);
-	
-	//calculating critical hit
-	var criticalMove1 =  Math.floor(0 + Math.random() * 101) <= CriticalHitEnum[movePlayer1.getCriticalHit()] ? true : false;
-	var criticalMove2 = Math.floor(0 + Math.random() * 101) <= CriticalHitEnum[movePlayer2.getCriticalHit()] ? true : false;
-	console.log("criticalMove1 " + criticalMove1);
-	console.log("criticalMove2 " + criticalMove2);
-	
-	//var random = Math.floor(85 + Math.random() * 16);
-	//var modifier = 
-
+	alert(player[1].getName() + " "  + player[1].getStats().getHP());
 }
 
 var battle = new Battle();
