@@ -165,7 +165,7 @@ label{
 	left:0%;
 	border: 7px double black;
 	background-color:#f6fceb;
-	height:50%;
+	height:47%;
 	z-index:999;
 	font-weight:600;
 	border-radius:8px;
@@ -180,7 +180,7 @@ label{
 	border-bottom-left-radius:12px;
 	background-color:#f6fceb;
 	width:33% !important;
-	height:40%;
+	height:43%;
 	font-weight:600;
 }
 
@@ -194,7 +194,7 @@ label{
 	border-bottom-left-radius:12px;
 	background-color:#f6fceb;
 	width:33% !important;
-	height:40%;
+	height:43%;
 	font-weight:600;
 	
 }
@@ -213,3 +213,20 @@ label{
 	padding:2px;
 }
 
+.progress-bar{
+	border: 1px black solid;
+    width: 97%;
+	border-radius:20%;
+}
+
+#progress-bar-porcentage1,#progress-bar-porcentage0{
+	line-height:0.5;
+	background-color:#2196F3;
+	padding-top:0.1em;
+	padding-bottom:0.1em;
+	
+}
+
+#playerhpbattle,#playerhpbattle2,#playerhporiginal,#playerhporiginal2,.slash{
+	font-size:8pt;
+}

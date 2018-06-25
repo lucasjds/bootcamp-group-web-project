@@ -455,11 +455,16 @@ const startBattle = async (battle) => {
 					var newHP = (Math.round((currentHP - damageAttack) * 100) / 100);
 					player[playerNext].getStats().setHP( (newHP < 0) ? 0 : newHP );
 					
+					//progress bar
 					//alert(player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP() );
+					var progress = playerNext == 0 ? (player[playerNext].getStats().getHP() * 100 ) / $("#playerhporiginal").html()  :
+												  (player[playerNext].getStats().getHP() * 100 ) / $("#playerhporiginal2").html() ;
+					$("#progress-bar-porcentage"+playerNext).attr("style", "width:" + progress + "%;");
+					//update HP on the screen
 					document.getElementById("informationboard").innerHTML = player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP();
 					playerNext == 0 ? document.getElementById("playerhpbattle").innerHTML = player[playerNext].getStats().getHP() : 
 									  document.getElementById("playerhpbattle2").innerHTML = player[playerNext].getStats().getHP();
-					await sleep(2000);
+					await sleep(3000);
 					
 				}
 				if(movePlayer[playerTurn].getCategory() == "net-good-stats"){
@@ -511,13 +516,13 @@ function sleep(ms) {
 }
 
 function play(){
-   var audio = document.getElementById("audio");
-   audio.play();
+	var audio = document.getElementById("audio");
+	audio.play();
 }
 
 function stop(){
-   var audio = document.getElementById("audio");
-   audio.pause();
+	var audio = document.getElementById("audio");
+	audio.pause();
 }
 
 var battle = new Battle();
