@@ -1,5 +1,5 @@
 class Pokemon {
-    constructor(id, name, image, types, height, weight, stats, moves) {
+    constructor(id, name, image,imageBack, types, height, weight, stats, moves) {
         this._id = id;
         this._name = name;
         this._image = image;
@@ -8,6 +8,7 @@ class Pokemon {
         this._weight = weight;
         this._stats = stats; //stats class
         this._moves = moves; //array move class
+		this._imageBack = imageBack;
     }
 
     getId() {
@@ -20,6 +21,10 @@ class Pokemon {
 
     getImage() {
         return this._image;
+    }
+	
+	getImageBack() {
+        return this._imageBack;
     }
 
     getTypes() {
@@ -209,7 +214,7 @@ const addPokemon = (pokemon,player) => {
     document.getElementById("speed" + player).innerHTML = pokemon.getStats().getSpeed();
 	
 	//battle
-	document.getElementById("pokeimagebattle" + player).src = pokemon.getImage();
+	document.getElementById("pokeimagebattle" + player).src = player == "2" ? pokemon.getImage() : pokemon.getImageBack();
 	document.getElementById("playernamebattle" + player).innerHTML = pokemon.getName();
 	document.getElementById("playerhpbattle" + player).innerHTML = pokemon.getStats().getHP() 
 	document.getElementById("playerhporiginal" + player).innerHTML = pokemon.getStats().getHP();
@@ -321,6 +326,7 @@ function createPokemon(data, types, stats,moves){
 	const pokemon = new Pokemon(data._id  != null ? data._id : data.id,
 								data._name != null ? data._name.toUpperCase() : data.name.toUpperCase(),
 								data._image != null ? data._image : data.sprites.front_default,
+								data._imageBack != null? data._imageBack : data.sprites.back_default,
 								types,
 								data._height != null ? data._height : data.height,
 								data._weight != null ? data._weight : data.weight,
