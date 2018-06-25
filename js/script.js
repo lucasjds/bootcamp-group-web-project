@@ -371,6 +371,50 @@ function chooseMove(player){
 	}
 	return [move,posMove];
 }
+
+function decideWhoStarts( movePlayer,player){
+	if( movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() > player[1].getStats().getSpeed()){
+		return [0,1];
+	}
+	if( movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() < player[1].getStats().getSpeed()){
+		return [1,0];
+	}
+	if( movePlayer[0].getPriority() > movePlayer[1].getPriority()){
+		return [0,1];
+	}
+	if(  movePlayer[0].getPriority() < movePlayer[1].getPriority()){
+		return [1,0];
+	}
+	return [0,1];
+}
+
+
+function setInformationBox(id, message){
+	document.getElementById(id).innerHTML = message;
+}
+
+function calculateAccuracy(movePlayer, playerTurn, playerNext){
+	if( movePlayer.getAccuracy() != undefined){
+		var adjusted_stages = playerTurn.getStats().getAccuracy() - ( playerNext.getStats().getEvasion());
+		adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
+		var accuracyMove = movePlayer.getAccuracy() * (  adjusted_stages  );
+		resultAccuracyMove = Math.floor(0 + Math.random() * 101) <= accuracyMove ? true : false;
+		console.log("resultAccuracyMove1 " + resultAccuracyMove);
+		return resultAccuracyMove;
+	}
+	return true;
+}
+
+function calculateCriticalHit(movePlayer){
+	var criticalHit = CriticalHitEnum[movePlayer.getCriticalHit()];
+	var criticalMove =  Math.floor(0 + Math.random() * 101) <= criticalHit ? 1.5 : 1;
+	return criticalMove;
+}
+
+function calculateModifier(){
+	
+}
+
 const startBattle = async (battle) => {
 	if (battle.getPokemons().length < 2)
 		return alert("Choose 2 pokemons to start a battle");
@@ -379,66 +423,38 @@ const startBattle = async (battle) => {
 	var player = [];
 	player[0] = battle.getPokemons()[0];
 	player[1] = battle.getPokemons()[1];
-	var playerTurn = 0;
-	var playerNext = 1;
+	var playerTurn = 0,playerNext = 1;
 	while(player[0].getStats().getHP() > 0 && player[1].getStats().getHP() > 0 ){
 		//controlling variables - choosing the move
 		var positionMove = [];
 		var movePlayer = [];
-		var decidingMove = chooseMove(player[0]);
-		movePlayer[0] = decidingMove[0];
-		positionMove[0] = decidingMove[1];
-		decidingMove = chooseMove(player[1]);
-		movePlayer[1] = decidingMove[0];
-		positionMove[1] = decidingMove[1];
+		var decidingMove;
 		for(var i = 0 ; i < 2; i++){
-			
+			decidingMove = chooseMove(player[i]);
+			movePlayer[i] = decidingMove[0];
+			positionMove[i] = decidingMove[1];
+		}
+		for(var i = 0 ; i < 2; i++){
 			//defining who starts first
-			if(i == 0 && movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() > player[1].getStats().getSpeed()){
-				playerTurn = 0;
-				playerNext = 1;
-			}else if(i == 0 && movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() < player[1].getStats().getSpeed()){
-				playerTurn = 1;
-				playerNext = 0;
-			}else if(i == 0 && movePlayer[0].getPriority() > movePlayer[1].getPriority()){
-				playerTurn = 0;
-				playerNext = 1;
-			}else if(i == 0 && movePlayer[0].getPriority() < movePlayer[1].getPriority()){
-				playerTurn = 1;
-				playerNext = 0;
-			}else if(i == 0 ){
-				playerTurn = 0;
-				playerNext = 1;
+			if (i == 0){
+				playerTurn = decideWhoStarts( movePlayer,player)[0];
+				playerNext = decideWhoStarts( movePlayer,player)[1];
 			}
-			
-			//alert(player[playerTurn].getName() + "'s turn");
-			document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + "'s turn";
+			setInformationBox("informationboard", player[playerTurn].getName() + "'s turn");
 			await sleep(2000);
 			
 			//decreasing pp
 			player[playerTurn].getMoves()[positionMove[playerTurn]].setPP(movePlayer[playerTurn].getPP()-1);
 			
 			//calculating accuracy - formula total = accuracy * ( accuracy_stat - ( evasion_stat))
-			var resultAccuracyMove = true;
-			if( movePlayer[playerTurn].getAccuracy() != undefined){
-				var adjusted_stages = player[playerTurn].getStats().getAccuracy() - ( player[playerNext].getStats().getEvasion());
-				adjusted_stages = adjusted_stages > 0 ? ((3 + adjusted_stages)/ 3) : (adjusted_stages < 0 ? (3 / ( 3 - adjusted_stages)) : 1 );
-				var accuracyMove = movePlayer[playerTurn].getAccuracy() * (  adjusted_stages  );
-				resultAccuracyMove = Math.floor(0 + Math.random() * 101) <= accuracyMove ? true : false;
-				console.log("resultAccuracyMove1 " + resultAccuracyMove);
-			}
-			
-			
+			var resultAccuracyMove = calculateAccuracy(movePlayer[playerTurn], player[playerTurn] ,player[playerNext]);
 			//validation ACCURACY
 			if(resultAccuracyMove){
-				//alert(player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
-				document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName();
+				setInformationBox("informationboard", player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
 				await sleep(2000);
 				if (movePlayer[playerTurn].getCategory() == "damage"){
 					//calculating critical hit
-					var criticalHit = CriticalHitEnum[movePlayer[playerTurn].getCriticalHit()];
-					var criticalMove =  Math.floor(0 + Math.random() * 101) <= criticalHit ? 1.5 : 1;
-					console.log("criticalMove " + criticalMove);
+					var criticalMove = calculateCriticalHit(movePlayer[playerTurn]);
 					
 					//calculating modifier
 					var modifierAttack = criticalMove * ( Math.floor(85 + Math.random() * 16)/100);
