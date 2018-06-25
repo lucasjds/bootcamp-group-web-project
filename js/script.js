@@ -357,6 +357,20 @@ function addPokemonToBattle(pokemon,player){
 	console.log(battle);
 }
 
+// START BATTLE FUNCTIONS
+
+function chooseMove(player){
+	var chosen = false;
+	var posMove ;
+	while(!chosen){
+		posMove = Math.floor(0 + Math.random() * 4);
+		if(player.getMoves()[posMove].getPP() > 0){
+			move = player.getMoves()[posMove];
+			chosen = true;
+		}
+	}
+	return [move,posMove];
+}
 const startBattle = async (battle) => {
 	if (battle.getPokemons().length < 2)
 		return alert("Choose 2 pokemons to start a battle");
@@ -368,25 +382,15 @@ const startBattle = async (battle) => {
 	var playerTurn = 0;
 	var playerNext = 1;
 	while(player[0].getStats().getHP() > 0 && player[1].getStats().getHP() > 0 ){
-		//controlling variables
+		//controlling variables - choosing the move
 		var positionMove = [];
 		var movePlayer = [];
-		var chosen = false;
-		while(!chosen){
-			positionMove[0] = Math.floor(0 + Math.random() * 4);
-			if(player[0].getMoves()[positionMove[0]].getPP() > 0){
-				movePlayer[0] = player[0].getMoves()[positionMove[0]];
-				chosen = true;
-			}
-		}
-		chosen = false;
-		while(!chosen){
-			positionMove[1] = Math.floor(0 + Math.random() * 4);
-			if(player[1].getMoves()[positionMove[1]].getPP() > 0){
-				movePlayer[1] = player[1].getMoves()[positionMove[1]];
-				chosen = true;
-			}
-		}
+		var decidingMove = chooseMove(player[0]);
+		movePlayer[0] = decidingMove[0];
+		positionMove[0] = decidingMove[1];
+		decidingMove = chooseMove(player[1]);
+		movePlayer[1] = decidingMove[0];
+		positionMove[1] = decidingMove[1];
 		for(var i = 0 ; i < 2; i++){
 			
 			//defining who starts first
