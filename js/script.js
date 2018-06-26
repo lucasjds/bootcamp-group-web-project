@@ -363,7 +363,16 @@ function chooseMove(player){
 	var chosen = false;
 	var posMove ;
 	while(!chosen){
+		var checkMoves = 0;
+		for (var i in player.getMoves()){
+			if(player.getMoves()[i].getPP() == 0){
+				checkMoves++;
+			}
+		}
+		if (checkMoves == 4)
+			return [null,null];
 		posMove = Math.floor(0 + Math.random() * 4);
+		var move = null;
 		if(player.getMoves()[posMove].getPP() > 0){
 			move = player.getMoves()[posMove];
 			chosen = true;
@@ -373,16 +382,12 @@ function chooseMove(player){
 }
 
 function decideWhoStarts( movePlayer,player){
-	if( movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() > player[1].getStats().getSpeed()){
+	if( (movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() > player[1].getStats().getSpeed())
+		 || ( movePlayer[0].getPriority() > movePlayer[1].getPriority())){
 		return [0,1];
 	}
-	if( movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() < player[1].getStats().getSpeed()){
-		return [1,0];
-	}
-	if( movePlayer[0].getPriority() > movePlayer[1].getPriority()){
-		return [0,1];
-	}
-	if(  movePlayer[0].getPriority() < movePlayer[1].getPriority()){
+	if( ( movePlayer[0].getPriority() == movePlayer[1].getPriority() && player[0].getStats().getSpeed() < player[1].getStats().getSpeed())
+		|| (movePlayer[0].getPriority() < movePlayer[1].getPriority()) ){
 		return [1,0];
 	}
 	return [0,1];
@@ -480,11 +485,14 @@ function messageEvasion(evasion , player, movePlayerTurn){
 		setInformationBox("informationboard", player.getName() + " had its evasion increased ");
 }
 
-function winner(player){
+async function winner(player){
 	var winner = player[1].getName();
 	if (  player[0].getStats().getHP() > 0 )
 		winner = player[0].getName();
-	return winner;
+	
+	setInformationBox("informationboard",  winner + " WINS!!");
+	await sleep(5000);
+	stop();
 }
 
 const startBattle = async (battle) => {
@@ -503,6 +511,10 @@ const startBattle = async (battle) => {
 		var decidingMove;
 		for(var i = 0 ; i < 2; i++){
 			decidingMove = chooseMove(player[i]);
+			if ( decidingMove[0] == null){
+				player[i].getStats().setHP( 0 );
+				return winner(player);
+			}
 			movePlayer[i] = decidingMove[0];
 			positionMove[i] = decidingMove[1];
 		}
@@ -570,9 +582,7 @@ const startBattle = async (battle) => {
 			}
 		}
 	}
-	setInformationBox("informationboard",   winner(player) + " WINS!!");
-	await sleep(5000);
-	stop();
+	winner(player);
 }
 
 function sleep(ms) {
