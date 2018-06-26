@@ -498,7 +498,9 @@ async function winner(player){
 const startBattle = async (battle) => {
 	if (battle.getPokemons().length < 2)
 		return alert("Choose 2 pokemons to start a battle");
+	$("#battle").show();
 	play();
+	
 	//type pokemon class 
 	var player = [];
 	player[0] = battle.getPokemons()[0];
@@ -603,7 +605,7 @@ var battle = new Battle();
 
 window.onload = function() {
 	
-	
+	$("#battle").hide();
 	document.getElementById("pokeform").addEventListener('submit', function(event){
 															event.preventDefault();
 															searchPokemon("");
