@@ -411,8 +411,80 @@ function calculateCriticalHit(movePlayer){
 	return criticalMove;
 }
 
-function calculateModifier(){
-	
+function calculateModifier(criticalMove){
+	return criticalMove * ( Math.floor(85 + Math.random() * 16)/100);
+}
+
+function calculateDamage(movePlayer, playerTurn, playerNext, modifierAttack){
+	if(movePlayer.getPower() != undefined){
+		var damageAttack = (( ( ((2/5) + 2) * movePlayer.getPower() * ( playerTurn.getStats().getAttack()/playerNext.getStats().getDefense() ))/50) + 2 ) * modifierAttack;
+		damageAttack = Math.round(damageAttack * 100) / 100; //decimal point
+		return damageAttack;
+	}
+	return 0;
+}
+
+function applyDamage(playerNext,damageAttack){
+	var currentHP = playerNext.getStats().getHP();
+	var newHP = (Math.round((currentHP - damageAttack) * 100) / 100);
+	return (newHP < 0) ? 0 : newHP;
+}
+
+function updateHPAndProgressBar(playerNext,player){
+	var result = player.getStats().getHP() * 100 ;
+	var progress;
+	if (playerNext == 0){
+		progress = result / $("#playerhporiginal").html();
+		document.getElementById("playerhpbattle").innerHTML = player.getStats().getHP();
+	}else{
+		progress = result / $("#playerhporiginal2").html();
+		document.getElementById("playerhpbattle2").innerHTML = player.getStats().getHP();
+	}
+	$("#progress-bar-porcentage"+playerNext).attr("style", "width:" + progress + "%;");
+}
+
+function calculateNetGoodStats(playerAccuracy,playerEvasion,movePlayerTurn){
+	var accuracy = movePlayerTurn.getStatChanges().getAccuracy();
+	var evasion = movePlayerTurn.getStatChanges().getEvasion();
+
+	var currentAccuracy = playerAccuracy.getStats().getAccuracy();
+	var currentEvasion =  playerEvasion.getStats().getEvasion();
+	var resultAccuracy = currentAccuracy + accuracy;
+	var resultEvasion = currentEvasion + evasion;
+	return [resultAccuracy,resultEvasion];
+}
+
+function whomNetGoodWillApplyFor(movePlayerTurn,playerTurn,playerNext){
+	var accuracy = movePlayerTurn.getStatChanges().getAccuracy();
+	var evasion = movePlayerTurn.getStatChanges().getEvasion();
+	var userAppliedAccuracy = accuracy > 0 ? playerTurn : playerNext; 
+	var userAppliedEvasion = evasion > 0 ? playerTurn : playerNext; 
+	return [userAppliedAccuracy,userAppliedEvasion];
+}
+
+function messageAccuracy(accuracy , player, movePlayerTurn){
+	if(movePlayerTurn.getStatChanges().getAccuracy() == 0)
+		return;
+	if(accuracy <0)
+		setInformationBox("informationboard", player.getName() + " had its accuracy decreased ");
+	if(accuracy >0)
+		setInformationBox("informationboard", player.getName() + " had its accuracy increased ");
+}
+
+function messageEvasion(evasion , player, movePlayerTurn){
+	if(movePlayerTurn.getStatChanges().getEvasion() == 0)
+		return;
+	if(evasion <0)
+		setInformationBox("informationboard", player.getName() + " had its evasion decreased ");
+	if(evasion >0)
+		setInformationBox("informationboard", player.getName() + " had its evasion increased ");
+}
+
+function winner(player){
+	var winner = player[1].getName();
+	if (  player[0].getStats().getHP() > 0 )
+		winner = player[0].getName();
+	return winner;
 }
 
 const startBattle = async (battle) => {
@@ -450,62 +522,38 @@ const startBattle = async (battle) => {
 			var resultAccuracyMove = calculateAccuracy(movePlayer[playerTurn], player[playerTurn] ,player[playerNext]);
 			//validation ACCURACY
 			if(resultAccuracyMove){
-				setInformationBox("informationboard", player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName());
+				setInformationBox("informationboard", player[playerTurn].getName() + " used " + movePlayer[playerTurn].getName().toUpperCase());
 				await sleep(2000);
 				if (movePlayer[playerTurn].getCategory() == "damage"){
 					//calculating critical hit
 					var criticalMove = calculateCriticalHit(movePlayer[playerTurn]);
 					
 					//calculating modifier
-					var modifierAttack = criticalMove * ( Math.floor(85 + Math.random() * 16)/100);
+					var modifierAttack = calculateModifier(criticalMove);
 					console.log("modifierAttack1 " + modifierAttack);
 					
 					//calculating damage
-					var damageAttack = 0;
-					if(movePlayer[playerTurn].getPower() != undefined){
-						damageAttack = (( ( ((2/5) + 2) * movePlayer[playerTurn].getPower() * ( player[playerTurn].getStats().getAttack()/player[playerNext].getStats().getDefense() ))/50) + 2 ) * modifierAttack;
-						damageAttack = Math.round(damageAttack * 100) / 100; //decimal point
-					}
-					//alert("the damage was " + damageAttack );
-					document.getElementById("informationboard").innerHTML = "the damage was " + damageAttack;
+					var damageAttack = calculateDamage(movePlayer[playerTurn], player[playerTurn], player[playerNext], modifierAttack);
+					
+					setInformationBox("informationboard", "The damage was " + damageAttack);
 					await sleep(2000);
 					
 					//apply damage
-					var currentHP = player[playerNext].getStats().getHP();
-					var newHP = (Math.round((currentHP - damageAttack) * 100) / 100);
-					player[playerNext].getStats().setHP( (newHP < 0) ? 0 : newHP );
-					
-					//progress bar
-					//alert(player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP() );
-					var progress = playerNext == 0 ? (player[playerNext].getStats().getHP() * 100 ) / $("#playerhporiginal").html()  :
-												  (player[playerNext].getStats().getHP() * 100 ) / $("#playerhporiginal2").html() ;
-					$("#progress-bar-porcentage"+playerNext).attr("style", "width:" + progress + "%;");
-					//update HP on the screen
-					document.getElementById("informationboard").innerHTML = player[0].getName() + ": " + player[0].getStats().getHP() + "vs" + player[1].getName() + ": " + player[1].getStats().getHP();
-					playerNext == 0 ? document.getElementById("playerhpbattle").innerHTML = player[playerNext].getStats().getHP() : 
-									  document.getElementById("playerhpbattle2").innerHTML = player[playerNext].getStats().getHP();
+					var newHP = applyDamage(player[playerNext],damageAttack);
+					player[playerNext].getStats().setHP( newHP );
+
+					//progress bar //update HP on the screen
+					updateHPAndProgressBar(playerNext,player[playerNext]);
+					setInformationBox("informationboard", player[0].getName() + " : " + player[0].getStats().getHP() + " VS " + player[1].getName() + " : " + player[1].getStats().getHP());
 					await sleep(3000);
-					
 				}
 				if(movePlayer[playerTurn].getCategory() == "net-good-stats"){
-					var accuracy = movePlayer[playerTurn].getStatChanges().getAccuracy();
-					var evasion = movePlayer[playerTurn].getStatChanges().getEvasion();
-					var currentAccuracy = player[playerNext].getStats().getAccuracy();
-					var currentEvasion =  player[playerNext].getStats().getEvasion();
-					var userAppliedAccuracy = accuracy > 0 ? playerTurn : playerNext; 
-					var userAppliedEvasion = evasion > 0 ? playerTurn : playerNext; 
-					player[userAppliedAccuracy].getStats().setAccuracy( currentAccuracy + accuracy);
-					player[userAppliedEvasion].getStats().setEvasion( currentEvasion + evasion);
-					
-					if(accuracy<0)
-						document.getElementById("informationboard").innerHTML = "accuracy was decreased " ;
-					else
-						document.getElementById("informationboard").innerHTML = "accuracy was increased " ;
-					
-					if(evasion<0)
-						document.getElementById("informationboard").innerHTML = "evasion was decreased " ;
-					else
-						document.getElementById("informationboard").innerHTML = "evasion was increased " ;
+					var resultPokemonAffectedByNet = whomNetGoodWillApplyFor(movePlayer[playerTurn],playerTurn,playerNext);					
+					var resultNetEffect = calculateNetGoodStats(player[resultPokemonAffectedByNet[0]],player[resultPokemonAffectedByNet[1]], movePlayer[playerTurn]);
+					player[resultPokemonAffectedByNet[0]].getStats().setAccuracy(resultNetEffect[0] );
+					player[resultPokemonAffectedByNet[1]].getStats().setEvasion( resultNetEffect[1]);
+					messageAccuracy(resultNetEffect[0], player[resultPokemonAffectedByNet[0]] , movePlayer[playerTurn]);
+					messageEvasion(resultNetEffect[1] , player[resultPokemonAffectedByNet[1]] , movePlayer[playerTurn]);
 					
 					await sleep(2000);
 				}
@@ -517,16 +565,12 @@ const startBattle = async (battle) => {
 				playerTurn = playerNext;
 				playerNext = aux;
 			}else{
-				//alert(player[playerTurn].getName() + "' missed");
-				document.getElementById("informationboard").innerHTML = player[playerTurn].getName() + " missed";
+				setInformationBox("informationboard",  player[playerTurn].getName() + " missed");
 				await sleep(2000);
 			}
 		}
 	}
-	var winner =player[1].getStats().getHP();
-	if (  player[0].getStats().getHP() > 0 )
-		winner = player[0].getName();
-	document.getElementById("informationboard").innerHTML = winner + " WINS!!";
+	setInformationBox("informationboard",   winner(player) + " WINS!!");
 	await sleep(5000);
 	stop();
 }
