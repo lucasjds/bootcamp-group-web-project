@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARSH WeatherApp</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom -->
+    <link href="css/card.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <header>
+        <div class="navbar navbar-dark bg-dark" id="arsh">
+            <div class="container d-flex justify-content-between">
+                <a href="arsh.html" class="navbar-brand">WEA<strong>TH</strong>ER</a>
+
+                <div class="navbar-right" style="margin-top: 8px;margin-right: 20px">
+                    <button class="btn btn-info  navbar-btn " style="margin-right: 15px" onclick="weather()">Current Weather</button>
+                    <input type="text" id="latitude" placeholder="latitude" style="margin-right: 15px;padding: 4px;color: black" required>
+                    <input type="text" id="longitude" placeholder="longitude" style="margin-right: 15px;padding: 4px;color: black" required>
+                    <button class="btn btn-info navbar-btn" onclick="weatherloc()">Get Weather</button>
+
+                </div>
+            </div>
+        </div>
+    </header>
+    <main role="main">
+        <section class="container">
+            <h2>Today's Weather</h2>
+            <div class="jumbotron" style="background:skyblue; color:white;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+                <h3>
+                    <div id="timezone" style="padding-bottom: 0.15cm;font-size:35px;color:black"></div>
+                    <div class="jumbotron" style="color: black;background: whitesmoke">
+                        <div class="row">
+                            <div class="col-sm-6">
+
+
+                                <div id="day" style="padding-bottom: 0.15cm;font-size: 25pt;"></div>
+
+                                <div id="visibility" style="padding-bottom: 0.15cm"></div>
+                                <div id="minutely" style="padding-bottom: 0.15cm;font-size: 15pt;"></div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div id="uv" style="padding-bottom: 0.15cm"></div>
+
+                                <div id="humidity" style="padding-bottom: 0.15cm"></div>
+
+                                <div id="wind" style="padding-bottom: 0.15cm"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="col-sm-2">
+                                <div id="img">
+                                    </t>
+                                </div>
+
+
+                            </div>
+                            <div class="col-sm-4">
+                                <div id="temp" style="font-size: 40px;color: black"></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </h3>
+            </div>
+            <br>
+            <div class="alert alert-info" id="location"></div>
+
+        </section>
+    </main>
+    <footer class="text-muted">
+        <div class="container" style="text-align: center">
+            <a href="https://www.linkedin.com/in/arshdeep-singh-a43496121/"><img src="images/icons/linkdin.png" style="width:40px;height: 40px;"></a>
+            <a href="https://www.facebook.com/b.arshdeep"><img src="images/icons/fb.png" style="width:40px;height: 40px;"></a>
+            <a href="https://www.instagram.com/arsh_boparai" /><img src="images/icons/instagram.png" style="width:30px;height: 30px;"></a>
+
+            <a href="https://plus.google.com/u/0/113193075357521890215"><img src="images/icons/google.png" style="width:30px;height: 30px;"></a>
+            <p>Call me: +1(647)967-1672(CA)</p>
+            <p>Email : boparai.arsh3@gmail.com</p>
+
+            <p><a href="https://arsh-boparai.github.io/Resume/" target="_blank">Resume</a></p>
+        </div>
+    </footer>
+
+    <!-- Core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/card.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/location.js"></script>
+
+
+</body>
+
+</html>

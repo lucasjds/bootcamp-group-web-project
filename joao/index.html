@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <link rel="stylesheet" href="css/style.css">
+    <title>Guess Game</title>
+
+
+</head>
+
+<body class="container">
+
+    <header style="margin: 20px 0 20px 0;">
+        <!-- <div class="back-image"></div> -->
+
+        <div class="row justify-content-center">
+            <h1 id="main-title" class="display-1 title-mobile">Guess the gender</h1>
+        </div>
+
+        <div class="row justify-content-center">
+            <p id="main-subtitle" class="lead">Try to guess some genders!</p>
+        </div>
+
+    </header>
+
+    <nav class="row justify-content-center mb-3">
+
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <button id="yg" class="btn btn-success">You Guess</button>
+            <button id="wg" class="btn btn-outline-info">We Guess</button>
+        </div>
+
+
+    </nav>
+
+    <div id="content"></div>
+    <div id="modal"></div>
+
+
+    <!-- contains the class to fetch data from Gender & Countries APIs -->
+    <script src="js/weguess/fetch.js"></script>
+    <!-- creates a instance off WeGuess in window.app -->
+    <script src="js/weguess/app.js"></script>
+
+
+    <!-- contains the class to fetch data from RandomUsers APIs -->
+    <script src="js/youguess/app.js"></script>
+    <!-- creates a instance off YouGuess in window.app -->
+    <script src="js/youguess/fetch.js"></script>
+
+    <!-- script for loading classes in window object -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

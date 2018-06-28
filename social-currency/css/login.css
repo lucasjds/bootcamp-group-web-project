@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+/*    outline: none;*/
+}
+
+.btn-right-icon {
+    margin-left: 10px;
+}
+
+/* LOGIN PAGE */
+.login-cover {
+    background: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;       /* percent width relative to the viewport */
+    height: 100vh;      /* percent height relative to the viewport */
+    z-index: 100;       /* hide page */
+
+    /* align icon both vertically and horizontally */
+    /* ref.: https://css-tricks.com/centering-css-complete-guide */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-progress {
+    display: none;
+}
+
+#msgLoginError {
+    display: none;
+}
+
+/* CARDS */
+.mdl-grid {
+	max-width: 900px;
+}
+
+.mdl-card__actions {
+	display: flex;
+	box-sizing:border-box;
+	align-items: center;
+}
+
+.mdl-card {
+  width: 310px;
+}
+
+#user-picture {
+  color: #fff;
+  height: 310px;
+  background: url('https://via.placeholder.com/150x150') center / cover;
+}
+
+.mdl-card__media {
+	margin: 0;
+}
+.mdl-card__media > img {
+	max-width: 100%;
+}
+

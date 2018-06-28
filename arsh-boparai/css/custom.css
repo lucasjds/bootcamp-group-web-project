@@ -1,6 +1,5 @@
 body {
     min-height: 75rem;
-    /* Can be removed; just added for demo purposes */
 }
 
 .navbar {
@@ -9,6 +8,10 @@ body {
 
 .bg-dark {
     background-color: #343a40!important;
+}
+
+#arsh strong {
+    color: orange;
 }
 
 .jumbotron {
